@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber Poly — Gestion des Présences</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1e5aa8',
+                        'primary-dark': '#164785',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>body { font-family: 'Inter', sans-serif; }</style>
+</head>
+<body class="min-h-screen bg-slate-100 flex items-center justify-center p-6">
+
+    <div class="w-full max-w-sm">
+        <!-- Logo -->
+        <div class="flex justify-center mb-8">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-900 tracking-tight">Cyber Poly</h1>
+                    <p class="text-xs text-slate-500 font-medium">Gestion des Présences</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Login Card -->
+        <div class="bg-white rounded-xl shadow-md border border-slate-200/60 overflow-hidden">
+            <div class="px-6 py-5 border-b border-slate-100">
+                <h2 class="text-base font-semibold text-slate-900">Connexion</h2>
+                <p class="text-sm text-slate-500 mt-0.5">Accédez à votre espace sécurisé</p>
+            </div>
+
+            <div class="p-6">
+                <div id="errorMsg" class="hidden mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm font-medium"></div>
+
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Adresse email</label>
+                        <div class="relative">
+                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
+                            <input type="email" id="email" placeholder="nom@cyberpoly.edu" required
+                                class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1.5">Mot de passe</label>
+                        <div class="relative">
+                            <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="11" x="3" y="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                            <input type="password" id="password" placeholder="Votre mot de passe" required
+                                class="w-full pl-9 pr-3 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all">
+                        </div>
+                    </div>
+
+                    <button type="submit" id="loginBtn"
+                        class="w-full py-2.5 bg-primary text-white text-sm font-semibold rounded-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary/30 transition-all flex items-center justify-center gap-2">
+                        Se connecter
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Demo Accounts -->
+        <div class="mt-5 space-y-2">
+            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center mb-3">Comptes de démonstration</p>
+            <button onclick="fillDemo('admin')" class="w-full flex items-center gap-3 px-4 py-3 bg-white rounded-xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-slate-300 transition-all text-left">
+                <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="text-sm font-medium text-slate-900">Administrateur</div>
+                    <div class="text-xs text-slate-500">admin@presence.com / admin123</div>
+                </div>
+            </button>
+            <button onclick="fillDemo('teacher')" class="w-full flex items-center gap-3 px-4 py-3 bg-white rounded-xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-slate-300 transition-all text-left">
+                <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.66 2.24 3 5 3s5-1.34 5-3v-5"/></svg>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <div class="text-sm font-medium text-slate-900">Enseignant</div>
+                    <div class="text-xs text-slate-500">prof@presence.com / enseignant123</div>
+                </div>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:3000/api';
+
+        function fillDemo(type) {
+            if (type === 'admin') {
+                document.getElementById('email').value = 'admin@presence.com';
+                document.getElementById('password').value = 'admin123';
+            } else {
+                document.getElementById('email').value = 'prof@presence.com';
+                document.getElementById('password').value = 'enseignant123';
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMsg');
+            const btn = document.getElementById('loginBtn');
+
+            errorDiv.classList.add('hidden');
+            btn.innerHTML = 'Connexion...';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                const data = await res.json();
+                if (res.ok) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    window.location.href = data.user.role === 'admin' ? '/admin' : '/enseignant';
+                } else {
+                    errorDiv.textContent = data.error || 'Email ou mot de passe incorrect';
+                    errorDiv.classList.remove('hidden');
+                }
+            } catch {
+                errorDiv.textContent = 'Erreur de connexion au serveur';
+                errorDiv.classList.remove('hidden');
+            } finally {
+                btn.innerHTML = 'Se connecter <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>';
+                btn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>

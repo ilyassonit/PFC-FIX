@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration — Cyber Poly</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>body{font-family:'Inter',sans-serif;}</style>
+</head>
+<body class="bg-slate-100 min-h-screen">
+
+<!-- Sidebar -->
+<aside class="w-64 min-h-screen bg-white border-r border-slate-200 fixed left-0 top-0 flex flex-col z-50">
+    <div class="px-6 py-6 border-b border-slate-100">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-[#1e5aa8] flex items-center justify-center">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+            </div>
+            <div>
+                <div class="text-sm font-bold text-slate-900 tracking-tight">Cyber Poly</div>
+                <div class="text-[11px] text-slate-500 font-medium">Gestion des Présences</div>
+            </div>
+        </div>
+    </div>
+    <nav class="flex-1 px-3 py-4 space-y-0.5" id="sidebarNav">
+        <div class="px-3 mb-2"><span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Administration</span></div>
+        <button onclick="showTab('dashboard')" data-tab="dashboard" class="nav-link w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#1e5aa8]/10 text-[#1e5aa8]">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+            Vue d'ensemble
+        </button>
+        <button onclick="showTab('students')" data-tab="students" class="nav-link w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.66 2.24 3 5 3s5-1.34 5-3v-5"/></svg>
+            Étudiants
+        </button>
+        <button onclick="showTab('sessions')" data-tab="sessions" class="nav-link w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+            Séances
+        </button>
+        <button onclick="showTab('justifications')" data-tab="justifications" class="nav-link w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>
+            Justificatifs
+        </button>
+        <button onclick="showTab('stats')" data-tab="stats" class="nav-link w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+            Statistiques
+        </button>
+    </nav>
+    <div class="p-4 border-t border-slate-100 mx-3 mb-3">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center"><span class="text-xs font-semibold text-slate-600" id="userInitial">U</span></div>
+            <div class="flex-1 min-w-0">
+                <div class="text-sm font-medium text-slate-900 truncate" id="userName">—</div>
+                <div class="text-[11px] text-slate-500 truncate" id="userEmail">—</div>
+            </div>
+            <button onclick="logout()" class="p-1.5 rounded-md text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors" title="Déconnexion">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
+            </button>
+        </div>
+    </div>
+</aside>
+
+<!-- Main -->
+<main class="ml-64 p-8">
+    <div class="mb-8">
+        <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Administration</h1>
+        <p class="text-sm text-slate-500 mt-1" id="userRole">—</p>
+    </div>
+
+    <!-- Message -->
+    <div id="msgBox" class="hidden mb-6 px-4 py-3 rounded-lg border text-sm font-medium flex items-center gap-2"></div>
+
+    <!-- ============ DASHBOARD ============ -->
+    <div id="tab-dashboard" class="tab-content">
+        <div class="grid grid-cols-4 gap-5" id="dashboardStats"></div>
+    </div>
+
+    <!-- ============ STUDENTS ============ -->
+    <div id="tab-students" class="tab-content hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200/60 p-5 mb-5">
+            <h3 class="text-sm font-semibold text-slate-900 mb-4">Ajouter un étudiant</h3>
+            <form id="addStudentForm" class="flex flex-wrap gap-3">
+                <input name="nom" placeholder="Nom" required class="flex-1 min-w-[140px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e5aa8]/20 focus:border-[#1e5aa8]">
+                <input name="prenom" placeholder="Prénom" required class="flex-1 min-w-[140px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e5aa8]/20 focus:border-[#1e5aa8]">
+                <input name="matricule" placeholder="Matricule" required class="flex-1 min-w-[120px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e5aa8]/20 focus:border-[#1e5aa8]">
+                <button type="submit" class="px-5 py-2 bg-[#1e5aa8] text-white text-sm font-medium rounded-lg hover:bg-[#164785] transition-colors flex items-center gap-1.5">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg> Ajouter
+                </button>
+            </form>
+        </div>
+        <div class="relative max-w-sm mb-5">
+            <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" id="studentSearch" onkeyup="renderStudents()" placeholder="Rechercher..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e5aa8]/20 focus:border-[#1e5aa8]">
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200/60 overflow-hidden">
+            <table class="w-full">
+                <thead><tr class="border-b border-slate-100 bg-slate-50/50">
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Nom</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Prénom</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Matricule</th>
+                    <th class="w-16"></th>
+                </tr></thead>
+                <tbody id="studentsTable" class="divide-y divide-slate-100"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============ SESSIONS ============ -->
+    <div id="tab-sessions" class="tab-content hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200/60 p-5 mb-5">
+            <h3 class="text-sm font-semibold text-slate-900 mb-4">Créer une séance</h3>
+            <form id="addSessionForm" class="flex flex-wrap gap-3 items-end">
+                <div class="flex-1 min-w-[140px]">
+                    <label class="block text-[10px] font-medium text-slate-500 mb-1">Date</label>
+                    <input type="date" name="date" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e5aa8]/20 focus:border-[#1e5aa8]">
+                </div>
+                <div class="min-w-[100px]">
+                    <label class="block text-[10px] font-medium text-slate-500 mb-1">Début</label>
+                    <input type="time" name="heure_debut" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e5aa8]/20 focus:border-[#1e5aa8]">
+                </div>
+                <div class="min-w-[100px]">
+                    <label class="block text-[10px] font-medium text-slate-500 mb-1">Fin</label>
+                    <input type="time" name="heure_fin" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e5aa8]/20 focus:border-[#1e5aa8]">
+                </div>
+                <input name="desc" placeholder="Description" required class="flex-[2] min-w-[200px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e5aa8]/20 focus:border-[#1e5aa8]">
+                <button type="submit" class="px-5 py-2 bg-[#1e5aa8] text-white text-sm font-medium rounded-lg hover:bg-[#164785] transition-colors flex items-center gap-1.5">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg> Créer
+                </button>
+            </form>
+        </div>
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200/60 overflow-hidden">
+            <table class="w-full">
+                <thead><tr class="border-b border-slate-100 bg-slate-50/50">
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Heure</th>
+                    <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Description</th>
+                    <th class="w-16"></th>
+                </tr></thead>
+                <tbody id="sessionsTable" class="divide-y divide-slate-100"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============ JUSTIFICATIONS ============ -->
+    <div id="tab-justifications" class="tab-content hidden">
+        <div class="space-y-6">
+            <div>
+                <h3 class="text-sm font-semibold text-amber-700 mb-3 flex items-center gap-2">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+                    En attente (<span id="countAttente">0</span>)
+                </h3>
+                <div id="justifsAttente" class="space-y-2"></div>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-emerald-700 mb-3 flex items-center gap-2">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                    Validés (<span id="countValides">0</span>)
+                </h3>
+                <div id="justifsValides"></div>
+            </div>
+            <div>
+                <h3 class="text-sm font-semibold text-red-600 mb-3 flex items-center gap-2">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>
+                    Rejetés (<span id="countRejetes">0</span>)
+                </h3>
+                <div id="justifsRejetes"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ============ STATS ============ -->
+    <div id="tab-stats" class="tab-content hidden">
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200/60 p-5 mb-5 flex flex-wrap gap-3 items-end">
+            <div>
+                <label class="block text-xs font-medium text-slate-500 mb-1.5">Date début</label>
+                <input type="date" id="dateDebut" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e5aa8]/20 focus:border-[#1e5aa8]">
+            </div>
+            <div>
+                <label class="block text-xs font-medium text-slate-500 mb-1.5">Date fin</label>
+                <input type="date" id="dateFin" class="px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e5aa8]/20 focus:border-[#1e5aa8]">
+            </div>
+            <button onclick="loadStats()" class="px-5 py-2 bg-[#1e5aa8] text-white text-sm font-medium rounded-lg hover:bg-[#164785] transition-colors flex items-center gap-1.5">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg> Filtrer
+            </button>
+        </div>
+        <div id="statsList" class="space-y-4"></div>
+    </div>
+</main>
+
+<script>
+const API = 'http://localhost:3000/api';
+let token = null;
+let students = [];
+
+async function init() {
+    token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    if (!token || user.role !== 'admin') { window.location.href = '/'; return; }
+    document.getElementById('userName').textContent = user.nom;
+    document.getElementById('userEmail').textContent = user.email;
+    document.getElementById('userInitial').textContent = (user.nom || 'U').charAt(0).toUpperCase();
+    document.getElementById('userRole').textContent = user.nom + ' — Interface de gestion';
+    await loadDashboard();
+}
+
+async function api(url, opts = {}) {
+    const res = await fetch(`${API}${url}`, {
+        ...opts,
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, ...opts.headers }
+    });
+    if (res.status === 401) { logout(); return; }
+    return res.json();
+}
+
+// ===== TABS =====
+async function showTab(tab) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.getElementById('tab-' + tab).classList.remove('hidden');
+    document.querySelectorAll('.nav-link').forEach(b => {
+        if (b.dataset.tab === tab) { b.className = 'nav-link w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#1e5aa8]/10 text-[#1e5aa8]'; }
+        else { b.className = 'nav-link w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all'; }
+    });
+    if (tab === 'students') await renderStudents();
+    if (tab === 'sessions') await renderSessions();
+    if (tab === 'justifications') await loadJustifications();
+    if (tab === 'stats') await loadStats();
+}
+
+// ===== DASHBOARD =====
+async function loadDashboard() {
+    const s = await api('/stats');
+    document.getElementById('dashboardStats').innerHTML = `
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200/60 p-5"><div class="flex items-center gap-2 mb-3"><div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#1e5aa8]"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div><span class="text-xs font-medium text-slate-500">Étudiants</span></div><div class="text-3xl font-bold text-slate-900">${s.total_etudiants || 0}</div></div>
+        <div class="bg-white rounded-xl shadow-sm border border-slate-200/60 p-5"><div class="flex items-center gap-2 mb-3"><div class="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-violet-600"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg></div><span class="text-xs font-medium text-slate-500">Séances</span></div><div class="text-3xl font-bold text-slate-900">${s.total_seances || 0}</div></div>
+        <div class="bg-white rounded-xl border border-emerald-200/60 shadow-sm p-5"><div class="flex items-center gap-2 mb-3"><div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg></div><span class="text-xs font-medium text-emerald-600">Présences</span></div><div class="text-3xl font-bold text-emerald-700">${s.total_presents || 0}</div></div>
+        <div class="bg-white rounded-xl border border-red-200/60 shadow-sm p-5"><div class="flex items-center gap-2 mb-3"><div class="w-8 h-8 rounded-lg bg-red-50 flex items-center justify-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-red-500"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg></div><span class="text-xs font-medium text-red-500">Absences</span></div><div class="text-3xl font-bold text-red-600">${s.total_absents || 0}</div></div>`;
+}
+
+// ===== STUDENTS =====
+document.getElementById('addStudentForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const result = await api('/etudiants', { method: 'POST', body: JSON.stringify({ nom: fd.get('nom'), prenom: fd.get('prenom'), matricule: fd.get('matricule') }) });
+    if (result.error) { showMsg(result.error, 'error'); return; }
+    e.target.reset(); await loadDashboard(); await renderStudents(); showMsg('Étudiant ajouté', 'success');
+});
+
+async function renderStudents() {
+    const data = await api('/etudiants');
+    students = Array.isArray(data) ? data : [];
+    const search = document.getElementById('studentSearch').value.toLowerCase();
+    const list = students.filter(e => `${e.nom} ${e.prenom}`.toLowerCase().includes(search) || e.matricule.toLowerCase().includes(search));
+    document.getElementById('studentsTable').innerHTML = list.length === 0 ? '<tr><td colspan="4" class="p-8 text-center text-sm text-slate-400">Aucun étudiant</td></tr>' :
+        list.map(e => `<tr class="hover:bg-slate-50/50 transition-colors"><td class="px-5 py-3 text-sm font-medium text-slate-900">${e.nom}</td><td class="px-5 py-3 text-sm text-slate-600">${e.prenom}</td><td class="px-5 py-3"><span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">${e.matricule}</span></td><td class="px-5 py-3"><button onclick="deleteStudent(${e.id})" class="text-slate-400 hover:text-red-500 transition-colors p-1 hover:bg-red-50 rounded"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></td></tr>`).join('');
+}
+async function deleteStudent(id) { if (!confirm('Supprimer cet étudiant ?')) return; await api(`/etudiants/${id}`, { method: 'DELETE' }); await loadDashboard(); await renderStudents(); showMsg('Étudiant supprimé', 'success'); }
+
+// ===== SESSIONS =====
+document.getElementById('addSessionForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const result = await api('/seances', { method: 'POST', body: JSON.stringify({ date_seance: fd.get('date'), heure_debut: fd.get('heure_debut'), heure_fin: fd.get('heure_fin'), description: fd.get('desc') }) });
+    if (result.error) { showMsg(result.error, 'error'); return; }
+    e.target.reset(); await loadDashboard(); await renderSessions(); showMsg('Séance créée', 'success');
+});
+
+async function renderSessions() {
+    const data = await api('/seances');
+    const seances = Array.isArray(data) ? data : [];
+    const fmtTime = (t) => t ? t.substring(0, 5) : '—';
+    document.getElementById('sessionsTable').innerHTML = seances.length === 0 ? '<tr><td colspan="4" class="p-8 text-center text-sm text-slate-400">Aucune séance</td></tr>' :
+        seances.map(s => `<tr class="hover:bg-slate-50/50 transition-colors"><td class="px-5 py-3 text-sm font-medium text-slate-900">${s.date_seance}</td><td class="px-5 py-3 text-sm text-slate-600">${fmtTime(s.heure_debut)} – ${fmtTime(s.heure_fin)}</td><td class="px-5 py-3 text-sm text-slate-600">${s.description}</td><td class="px-5 py-3"><button onclick="deleteSession(${s.id})" class="text-slate-400 hover:text-red-500 transition-colors p-1 hover:bg-red-50 rounded"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></td></tr>`).join('');
+}
+async function deleteSession(id) { if (!confirm('Supprimer cette séance ?')) return; await api(`/seances/${id}`, { method: 'DELETE' }); await loadDashboard(); await renderSessions(); showMsg('Séance supprimée', 'success'); }
+
+// ===== JUSTIFICATIONS =====
+async function loadJustifications() {
+    const [a, v, r] = await Promise.all([api('/justificatifs/en-attente'), api('/justificatifs/valides'), api('/justificatifs/rejetes')]);
+    const attente = Array.isArray(a) ? a : [];
+    const valides = Array.isArray(v) ? v : [];
+    const rejetes = Array.isArray(r) ? r : [];
+    document.getElementById('countAttente').textContent = attente.length;
+    document.getElementById('countValides').textContent = valides.length;
+    document.getElementById('countRejetes').textContent = rejetes.length;
+
+    const box = (j, btns) => `<div class="bg-white rounded-xl border border-slate-200/60 shadow-sm p-4"><div class="flex flex-wrap items-center justify-between gap-4"><div class="flex-1 min-w-[200px]"><div class="text-sm font-semibold text-slate-900">${j.nom} ${j.prenom} <span class="text-xs font-medium text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded ml-2">${j.matricule}</span></div><div class="text-xs text-slate-500 mt-1">${j.seance} — ${j.date_seance} · Motif: ${j.motif_absence}</div>${j.justificatif ? `<a href="http://localhost:3000/uploads/${j.justificatif}" target="_blank" class="text-xs text-[#1e5aa8] hover:underline mt-1 inline-block">Voir le fichier</a>` : ''}</div><div class="flex gap-2">${btns}</div></div></div>`;
+
+    document.getElementById('justifsAttente').innerHTML = attente.length === 0 ? '<div class="p-6 bg-white rounded-xl border border-slate-200/60 text-center text-sm text-slate-400">Aucun justificatif en attente</div>' :
+        attente.map(j => box(j, `<button onclick="traiterJustif(${j.presence_id},1)" class="px-3 py-1.5 bg-emerald-50 text-emerald-700 text-xs font-medium rounded-lg border border-emerald-200 hover:bg-emerald-100 transition-colors flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg> Valider</button><button onclick="traiterJustif(${j.presence_id},0)" class="px-3 py-1.5 bg-red-50 text-red-700 text-xs font-medium rounded-lg border border-red-200 hover:bg-red-100 transition-colors flex items-center gap-1"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg> Rejeter</button>`)).join('');
+
+    document.getElementById('justifsValides').innerHTML = valides.length === 0 ? '<div class="p-4 bg-white rounded-xl border border-slate-200/60 text-center text-xs text-slate-400">Aucun</div>' :
+        `<div class="bg-white rounded-xl border border-slate-200/60 shadow-sm overflow-hidden divide-y divide-slate-100">${valides.map(j => `<div class="px-5 py-3 flex justify-between items-center"><div><span class="text-sm font-medium text-slate-900">${j.nom} ${j.prenom}</span><span class="text-xs text-slate-500 ml-2">${j.seance} — ${j.motif_absence}</span></div><span class="px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-medium rounded-full border border-emerald-200">Validé</span></div>`).join('')}</div>`;
+
+    document.getElementById('justifsRejetes').innerHTML = rejetes.length === 0 ? '<div class="p-4 bg-white rounded-xl border border-slate-200/60 text-center text-xs text-slate-400">Aucun</div>' :
+        `<div class="bg-white rounded-xl border border-slate-200/60 shadow-sm overflow-hidden divide-y divide-slate-100">${rejetes.map(j => `<div class="px-5 py-3 flex justify-between items-center"><div><span class="text-sm font-medium text-slate-900">${j.nom} ${j.prenom}</span><span class="text-xs text-slate-500 ml-2">${j.seance} — ${j.motif_absence}</span></div><span class="px-2 py-0.5 bg-red-50 text-red-700 text-[10px] font-medium rounded-full border border-red-200">Rejeté</span></div>`).join('')}</div>`;
+}
+async function traiterJustif(id, valide) { await api(`/justificatifs/${id}/traiter`, { method: 'PUT', body: JSON.stringify({ valide }) }); await loadJustifications(); showMsg(valide === 1 ? 'Justificatif validé' : 'Justificatif rejeté', 'success'); }
+
+// ===== STATS =====
+async function loadStats() {
+    const dd = document.getElementById('dateDebut').value;
+    const df = document.getElementById('dateFin').value;
+    let url = '/stats/seances-completes';
+    if (dd && df) url += `?date_debut=${dd}&date_fin=${df}`;
+    const data = await api(url);
+    document.getElementById('statsList').innerHTML = data.length === 0 ? '<div class="p-8 bg-white rounded-xl border border-slate-200/60 text-center text-sm text-slate-400">Aucune donnée</div>' :
+        data.map(s => `<div class="bg-white rounded-xl border border-slate-200/60 shadow-sm p-5 hover:shadow-md transition-all"><div class="flex flex-wrap items-center justify-between gap-3 mb-4"><div><div class="text-sm font-semibold text-slate-900">${s.description}</div><div class="text-xs text-slate-500">${s.date_seance}</div></div><div class="text-2xl font-bold text-[#1e5aa8]">${s.taux_presence}%</div></div><div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-4"><div class="h-full bg-[#1e5aa8] rounded-full" style="width:${Math.min(100,Number(s.taux_presence))}%"></div></div><div class="grid grid-cols-4 gap-3"><div class="text-center p-3 bg-slate-50 rounded-lg"><div class="text-[10px] font-medium text-slate-500 mb-1">Total</div><div class="text-lg font-bold text-slate-900">${s.total_etudiants}</div></div><div class="text-center p-3 bg-emerald-50 rounded-lg"><div class="text-[10px] font-medium text-emerald-600 mb-1">Présents</div><div class="text-lg font-bold text-emerald-700">${s.presents}</div></div><div class="text-center p-3 bg-amber-50 rounded-lg"><div class="text-[10px] font-medium text-amber-600 mb-1">Justifiés</div><div class="text-lg font-bold text-amber-700">${s.absents_justifies}</div></div><div class="text-center p-3 bg-red-50 rounded-lg"><div class="text-[10px] font-medium text-red-500 mb-1">Non justifiés</div><div class="text-lg font-bold text-red-600">${s.absents_non_justifies}</div></div></div></div>`).join('');
+}
+
+// ===== UTILS =====
+function showMsg(msg, type) {
+    const box = document.getElementById('msgBox');
+    const c = type === 'success' ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-red-50 border-red-200 text-red-700';
+    const i = type === 'success' ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>' : '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>';
+    box.className = `mb-6 px-4 py-3 rounded-lg border text-sm font-medium flex items-center gap-2 ${c}`;
+    box.innerHTML = i + ' ' + msg;
+    box.classList.remove('hidden');
+    setTimeout(() => box.classList.add('hidden'), 4000);
+}
+function logout() { localStorage.clear(); window.location.href = '/'; }
+
+init();
+</script>
+</body>
+</html>
