@@ -216,7 +216,7 @@ function renderList() {
 
         let badge = '';
         if (e.justificatif && e.justificatif_valide === 1) badge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-semibold rounded-full border border-emerald-200">Validé</span>';
-        else if (e.justificatif && e.justificatif_valide === 0) badge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-red-50 text-red-700 text-[10px] font-semibold rounded-full border border-red-200">Rejeté</span>';
+        else if (e.justificatif && e.justificatif_valide === 2) badge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-red-50 text-red-700 text-[10px] font-semibold rounded-full border border-red-200">Rejeté</span>';
         else if (e.justificatif) badge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 text-[10px] font-semibold rounded-full border border-amber-200">En attente</span>';
 
         return `<div class="px-5 py-4 ${modified?'bg-amber-50/50':''} transition-colors">

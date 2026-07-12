@@ -99,7 +99,13 @@ app.get('/api/verify', verifierToken, (req, res) => {
 app.get('/api/seances', verifierToken, (req, res) => {
     db.query('SELECT id, date_seance, heure_debut, heure_fin, description FROM seances ORDER BY date_seance DESC, heure_debut DESC', (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.json(results);
+        const formattedResults = results.map(row => ({
+            ...row,
+            date_seance: row.date_seance.toISOString().split('T')[0]
+        }));
+
+        res.json(formattedResults);
+        
     });
 });
 
@@ -301,11 +307,26 @@ app.get('/api/stats/seances-completes', verifierToken, (req, res) => {
                 if (err) etudiants = [];
                 const presents = etudiants.filter(e => e.present === 1).length;
                 const absJ = etudiants.filter(e => e.present === 0 && e.justificatif_valide === 1).length;
-                const absNJ = etudiants.filter(e => e.present === 0 && (e.justificatif_valide === 0 || e.justificatif_valide === null)).length;
+                const absNJ = etudiants.filter(
+                    e =>
+                        e.present === 0 &&
+                        (
+                            e.justificatif_valide === 0 ||
+                            e.justificatif_valide === null ||
+                            e.justificatif_valide === 2
+                        )
+                ).length;
                 resultats.push({
-                    id: seance.id, date_seance: seance.date_seance, description: seance.description,
-                    total_etudiants: seance.total_etudiants, presents, absents_justifies: absJ, absents_non_justifies: absNJ,
-                    taux_presence: seance.total_etudiants > 0 ? ((presents / seance.total_etudiants) * 100).toFixed(1) : 0
+                    id: seance.id,
+                    date_seance: seance.date_seance.toISOString().split('T')[0],
+                    description: seance.description,
+                    total_etudiants: seance.total_etudiants,
+                    presents,
+                    absents_justifies: absJ,
+                    absents_non_justifies: absNJ,
+                    taux_presence: seance.total_etudiants > 0
+                        ? ((presents / seance.total_etudiants) * 100).toFixed(1)
+                        : 0
                 });
                 compteur++;
                 if (compteur === seances.length) res.json(resultats);
