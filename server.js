@@ -15,7 +15,7 @@ const SECRET_KEY = 'votre_cle_secrete_2024';
 
 // Middleware
 app.use(cors({
-    origin: true,
+    origin: process.env.FRONTEND_URL,
     credentials: true
 }));
 app.use(express.json());
@@ -105,9 +105,9 @@ app.post('/api/login', async (req, res) => {
         
         res.cookie('token', token, {
             httpOnly: true,
-            secure: false,        
-            sameSite: 'lax',      
-            maxAge: 24 * 60 * 60 * 1000 // 24 heures
+            secure: process.env.NODE_ENV === "production",        
+            sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",      
+            maxAge: 24 * 60 * 60 * 1000 
         });
         res.json({ user: { id: user.id, nom: user.nom, email: user.email, role: user.role } });
     } catch (error) {
