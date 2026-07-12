@@ -74,42 +74,12 @@
             </div>
         </div>
 
-        <!-- Demo Accounts -->
-        <div class="mt-5 space-y-2">
-            <p class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider text-center mb-3">Comptes de démonstration</p>
-            <button onclick="fillDemo('admin')" class="w-full flex items-center gap-3 px-4 py-3 bg-white rounded-xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-slate-300 transition-all text-left">
-                <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center shrink-0">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="text-sm font-medium text-slate-900">Administrateur</div>
-                    <div class="text-xs text-slate-500">admin@presence.com / admin123</div>
-                </div>
-            </button>
-            <button onclick="fillDemo('teacher')" class="w-full flex items-center gap-3 px-4 py-3 bg-white rounded-xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-slate-300 transition-all text-left">
-                <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center shrink-0">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-emerald-600"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c0 1.66 2.24 3 5 3s5-1.34 5-3v-5"/></svg>
-                </div>
-                <div class="flex-1 min-w-0">
-                    <div class="text-sm font-medium text-slate-900">Enseignant</div>
-                    <div class="text-xs text-slate-500">prof@presence.com / enseignant123</div>
-                </div>
-            </button>
-        </div>
+        
     </div>
 
     <script>
         const API_URL = '/api';
 
-        function fillDemo(type) {
-            if (type === 'admin') {
-                document.getElementById('email').value = 'admin@presence.com';
-                document.getElementById('password').value = 'admin123';
-            } else {
-                document.getElementById('email').value = 'prof@presence.com';
-                document.getElementById('password').value = 'enseignant123';
-            }
-        }
 
         document.getElementById('loginForm').addEventListener('submit', async (e) => {
             e.preventDefault();

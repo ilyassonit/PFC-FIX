@@ -382,6 +382,4 @@ app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin.html'))
 // ============ DÉMARRAGE ============
 app.listen(PORT, "0.0.0.0" , () => {
     console.log(`\n🚀 Serveur démarré sur http://localhost:${PORT}`);
-    console.log(`🔐 Admin: admin@presence.com / admin123`);
-    console.log(`🔐 Enseignant: prof@presence.com / enseignant123\n`);
 });
