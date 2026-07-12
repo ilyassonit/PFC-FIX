@@ -10,22 +10,41 @@
 </head>
 <body class="bg-slate-100 min-h-screen">
 
+<!-- Mobile top bar -->
+<header class="md:hidden fixed top-0 left-0 right-0 h-14 bg-white border-b border-slate-200 flex items-center justify-between px-4 z-40">
+    <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-[#1e5aa8] flex items-center justify-center">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+        </div>
+        <span class="text-sm font-bold text-slate-900 tracking-tight">Cyber Poly</span>
+    </div>
+    <button onclick="toggleSidebar()" class="p-2 -mr-2 rounded-md text-slate-600 hover:bg-slate-50" aria-label="Menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+    </button>
+</header>
+
+<!-- Mobile overlay (behind drawer, closes it on tap) -->
+<div id="sidebarOverlay" onclick="closeSidebar()" class="hidden fixed inset-0 bg-slate-900/40 z-40 md:hidden"></div>
+
 <!-- Sidebar -->
-<aside class="w-64 min-h-screen bg-white border-r border-slate-200 fixed left-0 top-0 flex flex-col z-50">
+<aside id="sidebar" class="fixed left-0 top-0 min-h-screen w-64 bg-white border-r border-slate-200 flex flex-col z-50 -translate-x-full md:translate-x-0 transition-transform duration-200 ease-out">
     <div class="px-6 py-6 border-b border-slate-100">
         <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-lg bg-[#1e5aa8] flex items-center justify-center">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
             </div>
-            <div>
+            <div class="flex-1 min-w-0">
                 <div class="text-sm font-bold text-slate-900 tracking-tight">Cyber Poly</div>
                 <div class="text-[11px] text-slate-500 font-medium">Gestion des Présences</div>
             </div>
+            <button onclick="closeSidebar()" class="md:hidden p-1.5 -mr-1.5 rounded-md text-slate-400 hover:bg-slate-50" aria-label="Fermer">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
         </div>
     </div>
     <nav class="flex-1 px-3 py-4 space-y-0.5">
         <div class="px-3 mb-2"><span class="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Enseignant</span></div>
-        <a href="/enseignant" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#1e5aa8]/10 text-[#1e5aa8]">
+        <a href="/enseignant" onclick="closeSidebar()" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#1e5aa8]/10 text-[#1e5aa8]">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>
             Pointage
         </a>
@@ -51,7 +70,7 @@
 </aside>
 
 <!-- Main -->
-<main class="ml-64 p-8">
+<main class="p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
     <div class="mb-8">
         <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Pointage des présences</h1>
         <p class="text-sm text-slate-500 mt-1" id="dateStr">—</p>
@@ -71,7 +90,7 @@
     <!-- Content -->
     <div id="contentArea" class="hidden">
         <!-- Stats -->
-        <div class="grid grid-cols-4 gap-4 mb-6" id="statsRow"></div>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 mb-6" id="statsRow"></div>
 
         <!-- Actions -->
         <div class="flex flex-wrap gap-2 mb-5">
@@ -86,7 +105,7 @@
                 <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
                 <input type="text" id="searchInput" onkeyup="filterStudents()" placeholder="Rechercher par nom ou matricule..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e5aa8]/20 focus:border-[#1e5aa8]">
             </div>
-            <div class="flex gap-1 bg-white p-1 rounded-lg border border-slate-200" id="filterBtns">
+            <div class="flex flex-wrap gap-1 bg-white p-1 rounded-lg border border-slate-200 w-full sm:w-auto" id="filterBtns">
                 <button onclick="setFilter('all')" class="filter-btn px-3 py-1.5 text-xs font-medium rounded-md bg-[#1e5aa8] text-white" data-filter="all">Tous</button>
                 <button onclick="setFilter('present')" class="filter-btn px-3 py-1.5 text-xs font-medium rounded-md text-slate-500 hover:text-slate-700 hover:bg-slate-50" data-filter="present">Présents</button>
                 <button onclick="setFilter('absent')" class="filter-btn px-3 py-1.5 text-xs font-medium rounded-md text-slate-500 hover:text-slate-700 hover:bg-slate-50" data-filter="absent">Absents</button>
@@ -122,6 +141,16 @@ const ICONS = {
     upload: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" x2="12" y1="3" y2="15"/></svg>',
     save: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>'
 };
+
+// ===== MOBILE SIDEBAR =====
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    document.getElementById('sidebarOverlay').classList.toggle('hidden');
+}
+function closeSidebar() {
+    document.getElementById('sidebar').classList.add('-translate-x-full');
+    document.getElementById('sidebarOverlay').classList.add('hidden');
+}
 
 async function init() {
     // Vérifier l'authentification via le cookie HTTP-only
@@ -224,10 +253,10 @@ function renderList() {
         else if (e.justificatif && e.justificatif_valide === 2) badge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-red-50 text-red-700 text-[10px] font-semibold rounded-full border border-red-200">Rejeté</span>';
         else if (e.justificatif) badge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 text-[10px] font-semibold rounded-full border border-amber-200">En attente</span>';
 
-        return `<div class="px-5 py-4 ${modified?'bg-amber-50/50':''} transition-colors">
-            <div class="flex flex-wrap items-center gap-4">
-                <div class="flex items-center gap-3 flex-1 min-w-[200px]">
-                    <div class="w-9 h-9 rounded-full bg-slate-100 flex items-center justify-center text-sm font-semibold text-slate-500">${e.prenom.charAt(0)}${e.nom.charAt(0)}</div>
+        return `<div class="px-4 py-3 sm:px-5 sm:py-4 ${modified?'bg-amber-50/50':''} transition-colors">
+            <div class="flex flex-wrap items-center gap-3 sm:gap-4">
+                <div class="flex items-center gap-3 flex-1 min-w-[180px]">
+                    <div class="w-9 h-9 shrink-0 rounded-full bg-slate-100 flex items-center justify-center text-sm font-semibold text-slate-500">${e.prenom.charAt(0)}${e.nom.charAt(0)}</div>
                     <div>
                         <div class="flex items-center gap-2 flex-wrap">
                             <span class="text-sm font-semibold text-slate-900">${e.nom} ${e.prenom}</span>
@@ -241,13 +270,13 @@ function renderList() {
                     <div class="w-2 h-2 rounded-full ${statusColors[status]}"></div>
                     <span class="text-xs font-medium text-slate-500 w-14">${statusLabels[status]}</span>
                 </div>
-                <div class="flex items-center gap-1.5">
+                <div class="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
                     ${['present','justifie','absent'].map(s => {
                         const active = status === s;
                         const colors = s==='present'?['bg-emerald-500 text-white border-emerald-500','bg-white text-slate-500 border-slate-200 hover:bg-slate-50']:
                                        s==='justifie'?['bg-amber-400 text-white border-amber-400','bg-white text-slate-500 border-slate-200 hover:bg-slate-50']:
                                        ['bg-red-400 text-white border-red-400','bg-white text-slate-500 border-slate-200 hover:bg-slate-50'];
-                        return `<button onclick="setStatus(${e.id},'${s}')" class="px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${active?colors[0]:colors[1]}">${s==='present'?'Présent':s==='justifie'?'Justifié':'Absent'}</button>`;
+                        return `<button onclick="setStatus(${e.id},'${s}')" class="flex-1 sm:flex-none px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${active?colors[0]:colors[1]}">${s==='present'?'Présent':s==='justifie'?'Justifié':'Absent'}</button>`;
                     }).join('')}
                     <button onclick="uploadJustif(${e.id})" class="ml-1 p-1.5 text-slate-400 hover:text-[#1e5aa8] hover:bg-blue-50 rounded-lg transition-colors" title="Envoyer un justificatif">${ICONS.upload}</button>
                 </div>

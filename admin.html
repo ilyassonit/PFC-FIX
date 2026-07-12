@@ -10,17 +10,36 @@
 </head>
 <body class="bg-slate-100 min-h-screen">
 
+<!-- Mobile top bar -->
+<header class="md:hidden fixed top-0 left-0 right-0 h-14 bg-white border-b border-slate-200 flex items-center justify-between px-4 z-40">
+    <div class="flex items-center gap-2.5">
+        <div class="w-8 h-8 rounded-lg bg-[#1e5aa8] flex items-center justify-center">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
+        </div>
+        <span class="text-sm font-bold text-slate-900 tracking-tight">Cyber Poly</span>
+    </div>
+    <button onclick="toggleSidebar()" class="p-2 -mr-2 rounded-md text-slate-600 hover:bg-slate-50" aria-label="Menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+    </button>
+</header>
+
+<!-- Mobile overlay (behind drawer, closes it on tap) -->
+<div id="sidebarOverlay" onclick="closeSidebar()" class="hidden fixed inset-0 bg-slate-900/40 z-40 md:hidden"></div>
+
 <!-- Sidebar -->
-<aside class="w-64 min-h-screen bg-white border-r border-slate-200 fixed left-0 top-0 flex flex-col z-50">
+<aside id="sidebar" class="fixed left-0 top-0 min-h-screen w-64 bg-white border-r border-slate-200 flex flex-col z-50 -translate-x-full md:translate-x-0 transition-transform duration-200 ease-out">
     <div class="px-6 py-6 border-b border-slate-100">
         <div class="flex items-center gap-3">
             <div class="w-9 h-9 rounded-lg bg-[#1e5aa8] flex items-center justify-center">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-white"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>
             </div>
-            <div>
+            <div class="flex-1 min-w-0">
                 <div class="text-sm font-bold text-slate-900 tracking-tight">Cyber Poly</div>
                 <div class="text-[11px] text-slate-500 font-medium">Gestion des Présences</div>
             </div>
+            <button onclick="closeSidebar()" class="md:hidden p-1.5 -mr-1.5 rounded-md text-slate-400 hover:bg-slate-50" aria-label="Fermer">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
         </div>
     </div>
     <nav class="flex-1 px-3 py-4 space-y-0.5" id="sidebarNav">
@@ -61,7 +80,7 @@
 </aside>
 
 <!-- Main -->
-<main class="ml-64 p-8">
+<main class="p-4 pt-20 md:ml-64 md:p-8 md:pt-8">
     <div class="mb-8">
         <h1 class="text-2xl font-bold text-slate-900 tracking-tight">Administration</h1>
         <p class="text-sm text-slate-500 mt-1" id="userRole">—</p>
@@ -72,18 +91,18 @@
 
     <!-- ============ DASHBOARD ============ -->
     <div id="tab-dashboard" class="tab-content">
-        <div class="grid grid-cols-4 gap-5" id="dashboardStats"></div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-5" id="dashboardStats"></div>
     </div>
 
     <!-- ============ STUDENTS ============ -->
     <div id="tab-students" class="tab-content hidden">
         <div class="bg-white rounded-xl shadow-sm border border-slate-200/60 p-5 mb-5">
             <h3 class="text-sm font-semibold text-slate-900 mb-4">Ajouter un étudiant</h3>
-            <form id="addStudentForm" class="flex flex-wrap gap-3">
-                <input name="nom" placeholder="Nom" required class="flex-1 min-w-[140px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e5aa8]/20 focus:border-[#1e5aa8]">
-                <input name="prenom" placeholder="Prénom" required class="flex-1 min-w-[140px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e5aa8]/20 focus:border-[#1e5aa8]">
-                <input name="matricule" placeholder="Matricule" required class="flex-1 min-w-[120px] px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e5aa8]/20 focus:border-[#1e5aa8]">
-                <button type="submit" class="px-5 py-2 bg-[#1e5aa8] text-white text-sm font-medium rounded-lg hover:bg-[#164785] transition-colors flex items-center gap-1.5">
+            <form id="addStudentForm" class="flex flex-col md:flex-row gap-3">
+                <input name="nom" placeholder="Nom" required class="w-full md:flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+                <input name="prenom" placeholder="Prénom" required class="w-full md:flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+                <input name="matricule" placeholder="Matricule" required class="w-full md:flex-1 px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm">
+                <button type="submit" class="w-full md:w-auto px-5 py-2 bg-[#1e5aa8] text-white rounded-lg">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg> Ajouter
                 </button>
             </form>
@@ -92,8 +111,8 @@
             <svg class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
             <input type="text" id="studentSearch" onkeyup="renderStudents()" placeholder="Rechercher..." class="w-full pl-9 pr-3 py-2 bg-white border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e5aa8]/20 focus:border-[#1e5aa8]">
         </div>
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200/60 overflow-hidden">
-            <table class="w-full">
+        <div class="hidden md:block overflow-x-auto bg-white rounded-xl shadow-sm border border-slate-200/60">
+            <table class="min-w-[700px] w-full">
                 <thead><tr class="border-b border-slate-100 bg-slate-50/50">
                     <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Nom</th>
                     <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Prénom</th>
@@ -103,13 +122,14 @@
                 <tbody id="studentsTable" class="divide-y divide-slate-100"></tbody>
             </table>
         </div>
+        <div id="studentsCards" class="md:hidden space-y-2"></div>
     </div>
 
     <!-- ============ SESSIONS ============ -->
     <div id="tab-sessions" class="tab-content hidden">
         <div class="bg-white rounded-xl shadow-sm border border-slate-200/60 p-5 mb-5">
             <h3 class="text-sm font-semibold text-slate-900 mb-4">Créer une séance</h3>
-            <form id="addSessionForm" class="flex flex-wrap gap-3 items-end">
+            <form id="addSessionForm" class="flex flex-col md:flex-row gap-3">
                 <div class="flex-1 min-w-[140px]">
                     <label class="block text-[10px] font-medium text-slate-500 mb-1">Date</label>
                     <input type="date" name="date" required class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1e5aa8]/20 focus:border-[#1e5aa8]">
@@ -128,8 +148,8 @@
                 </button>
             </form>
         </div>
-        <div class="bg-white rounded-xl shadow-sm border border-slate-200/60 overflow-hidden">
-            <table class="w-full">
+        <div class="hidden md:block overflow-x-auto bg-white rounded-xl shadow-sm border border-slate-200/60">
+            <table class="min-w-[700px] w-full">
                 <thead><tr class="border-b border-slate-100 bg-slate-50/50">
                     <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Date</th>
                     <th class="text-left px-5 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wider">Heure</th>
@@ -139,6 +159,7 @@
                 <tbody id="sessionsTable" class="divide-y divide-slate-100"></tbody>
             </table>
         </div>
+        <div id="sessionsCards" class="md:hidden space-y-2"></div>
     </div>
 
     <!-- ============ JUSTIFICATIONS ============ -->
@@ -217,6 +238,16 @@ async function api(url, opts = {}) {
     return res.json();
 }
 
+// ===== MOBILE SIDEBAR =====
+function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    document.getElementById('sidebarOverlay').classList.toggle('hidden');
+}
+function closeSidebar() {
+    document.getElementById('sidebar').classList.add('-translate-x-full');
+    document.getElementById('sidebarOverlay').classList.add('hidden');
+}
+
 // ===== TABS =====
 async function showTab(tab) {
     document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
@@ -225,6 +256,7 @@ async function showTab(tab) {
         if (b.dataset.tab === tab) { b.className = 'nav-link w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium bg-[#1e5aa8]/10 text-[#1e5aa8]'; }
         else { b.className = 'nav-link w-full text-left flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all'; }
     });
+    closeSidebar();
     if (tab === 'students') await renderStudents();
     if (tab === 'sessions') await renderSessions();
     if (tab === 'justifications') await loadJustifications();
@@ -257,6 +289,8 @@ async function renderStudents() {
     const list = students.filter(e => `${e.nom} ${e.prenom}`.toLowerCase().includes(search) || e.matricule.toLowerCase().includes(search));
     document.getElementById('studentsTable').innerHTML = list.length === 0 ? '<tr><td colspan="4" class="p-8 text-center text-sm text-slate-400">Aucun étudiant</td></tr>' :
         list.map(e => `<tr class="hover:bg-slate-50/50 transition-colors"><td class="px-5 py-3 text-sm font-medium text-slate-900">${e.nom}</td><td class="px-5 py-3 text-sm text-slate-600">${e.prenom}</td><td class="px-5 py-3"><span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">${e.matricule}</span></td><td class="px-5 py-3"><button onclick="deleteStudent(${e.id})" class="text-slate-400 hover:text-red-500 transition-colors p-1 hover:bg-red-50 rounded"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></td></tr>`).join('');
+    document.getElementById('studentsCards').innerHTML = list.length === 0 ? '<div class="p-8 text-center text-sm text-slate-400 bg-white rounded-xl border border-slate-200/60">Aucun étudiant</div>' :
+        list.map(e => `<div class="bg-white rounded-xl border border-slate-200/60 shadow-sm p-4 flex items-center justify-between gap-3"><div class="min-w-0"><div class="text-sm font-semibold text-slate-900 truncate">${e.nom} ${e.prenom}</div><span class="text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded inline-block mt-1">${e.matricule}</span></div><button onclick="deleteStudent(${e.id})" class="shrink-0 text-slate-400 hover:text-red-500 transition-colors p-2 hover:bg-red-50 rounded-lg"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></div>`).join('');
 }
 async function deleteStudent(id) { if (!confirm('Supprimer cet étudiant ?')) return; await api(`/etudiants/${id}`, { method: 'DELETE' }); await loadDashboard(); await renderStudents(); showMsg('Étudiant supprimé', 'success'); }
 
@@ -275,6 +309,8 @@ async function renderSessions() {
     const fmtTime = (t) => t ? t.substring(0, 5) : '—';
     document.getElementById('sessionsTable').innerHTML = seances.length === 0 ? '<tr><td colspan="4" class="p-8 text-center text-sm text-slate-400">Aucune séance</td></tr>' :
         seances.map(s => `<tr class="hover:bg-slate-50/50 transition-colors"><td class="px-5 py-3 text-sm font-medium text-slate-900">${s.date_seance}</td><td class="px-5 py-3 text-sm text-slate-600">${fmtTime(s.heure_debut)} – ${fmtTime(s.heure_fin)}</td><td class="px-5 py-3 text-sm text-slate-600">${s.description}</td><td class="px-5 py-3"><button onclick="deleteSession(${s.id})" class="text-slate-400 hover:text-red-500 transition-colors p-1 hover:bg-red-50 rounded"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></td></tr>`).join('');
+    document.getElementById('sessionsCards').innerHTML = seances.length === 0 ? '<div class="p-8 text-center text-sm text-slate-400 bg-white rounded-xl border border-slate-200/60">Aucune séance</div>' :
+        seances.map(s => `<div class="bg-white rounded-xl border border-slate-200/60 shadow-sm p-4 flex items-center justify-between gap-3"><div class="min-w-0"><div class="text-sm font-semibold text-slate-900">${s.date_seance}</div><div class="text-xs text-slate-500 mt-0.5">${fmtTime(s.heure_debut)} – ${fmtTime(s.heure_fin)}</div><div class="text-xs text-slate-600 mt-1 truncate">${s.description}</div></div><button onclick="deleteSession(${s.id})" class="shrink-0 text-slate-400 hover:text-red-500 transition-colors p-2 hover:bg-red-50 rounded-lg"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button></div>`).join('');
 }
 async function deleteSession(id) { if (!confirm('Supprimer cette séance ?')) return; await api(`/seances/${id}`, { method: 'DELETE' }); await loadDashboard(); await renderSessions(); showMsg('Séance supprimée', 'success'); }
 
@@ -309,7 +345,7 @@ async function loadStats() {
     if (dd && df) url += `?date_debut=${dd}&date_fin=${df}`;
     const data = await api(url);
     document.getElementById('statsList').innerHTML = data.length === 0 ? '<div class="p-8 bg-white rounded-xl border border-slate-200/60 text-center text-sm text-slate-400">Aucune donnée</div>' :
-        data.map(s => `<div class="bg-white rounded-xl border border-slate-200/60 shadow-sm p-5 hover:shadow-md transition-all"><div class="flex flex-wrap items-center justify-between gap-3 mb-4"><div><div class="text-sm font-semibold text-slate-900">${s.description}</div><div class="text-xs text-slate-500">${s.date_seance}</div></div><div class="text-2xl font-bold text-[#1e5aa8]">${s.taux_presence}%</div></div><div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-4"><div class="h-full bg-[#1e5aa8] rounded-full" style="width:${Math.min(100,Number(s.taux_presence))}%"></div></div><div class="grid grid-cols-4 gap-3"><div class="text-center p-3 bg-slate-50 rounded-lg"><div class="text-[10px] font-medium text-slate-500 mb-1">Total</div><div class="text-lg font-bold text-slate-900">${s.total_etudiants}</div></div><div class="text-center p-3 bg-emerald-50 rounded-lg"><div class="text-[10px] font-medium text-emerald-600 mb-1">Présents</div><div class="text-lg font-bold text-emerald-700">${s.presents}</div></div><div class="text-center p-3 bg-amber-50 rounded-lg"><div class="text-[10px] font-medium text-amber-600 mb-1">Justifiés</div><div class="text-lg font-bold text-amber-700">${s.absents_justifies}</div></div><div class="text-center p-3 bg-red-50 rounded-lg"><div class="text-[10px] font-medium text-red-500 mb-1">Non justifiés</div><div class="text-lg font-bold text-red-600">${s.absents_non_justifies}</div></div></div></div>`).join('');
+        data.map(s => `<div class="bg-white rounded-xl border border-slate-200/60 shadow-sm p-5 hover:shadow-md transition-all"><div class="flex flex-wrap items-center justify-between gap-3 mb-4"><div><div class="text-sm font-semibold text-slate-900">${s.description}</div><div class="text-xs text-slate-500">${s.date_seance}</div></div><div class="text-2xl font-bold text-[#1e5aa8]">${s.taux_presence}%</div></div><div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-4"><div class="h-full bg-[#1e5aa8] rounded-full" style="width:${Math.min(100,Number(s.taux_presence))}%"></div></div><div class="grid grid-cols-2 sm:grid-cols-4 gap-3"><div class="text-center p-3 bg-slate-50 rounded-lg"><div class="text-[10px] font-medium text-slate-500 mb-1">Total</div><div class="text-lg font-bold text-slate-900">${s.total_etudiants}</div></div><div class="text-center p-3 bg-emerald-50 rounded-lg"><div class="text-[10px] font-medium text-emerald-600 mb-1">Présents</div><div class="text-lg font-bold text-emerald-700">${s.presents}</div></div><div class="text-center p-3 bg-amber-50 rounded-lg"><div class="text-[10px] font-medium text-amber-600 mb-1">Justifiés</div><div class="text-lg font-bold text-amber-700">${s.absents_justifies}</div></div><div class="text-center p-3 bg-red-50 rounded-lg"><div class="text-[10px] font-medium text-red-500 mb-1">Non justifiés</div><div class="text-lg font-bold text-red-600">${s.absents_non_justifies}</div></div></div></div>`).join('');
 }
 
 // ===== UTILS =====
