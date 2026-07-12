@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
@@ -9,7 +10,7 @@ const fs = require('fs');
 const cookieParser = require('cookie-parser');
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 const SECRET_KEY = 'votre_cle_secrete_2024';
 
 // Middleware
@@ -36,10 +37,11 @@ const upload = multer({ storage: storage });
 
 // Connexion MySQL
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '123456',
-    database: 'presence'
+    host: process.env.MYSQLHOST,
+    user: process.env.MYSQLUSER,
+    password: process.env.MYSQLPASSWORD,
+    database: process.env.MYSQLDATABASE || process.env.MYSQL_DATABASE,
+    port: process.env.MYSQLPORT
 });
 
 db.connect(async (err) => {
