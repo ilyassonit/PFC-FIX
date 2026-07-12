@@ -6,14 +6,19 @@ const jwt = require('jsonwebtoken');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
+const cookieParser = require('cookie-parser');
 
 const app = express();
 const PORT = 3000;
 const SECRET_KEY = 'votre_cle_secrete_2024';
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: true,
+    credentials: true
+}));
 app.use(express.json());
+app.use(cookieParser());
 app.use(express.static(__dirname));
 
 // Dossier uploads
@@ -56,13 +61,23 @@ db.connect(async (err) => {
     } catch (error) {}
 });
 
-// Middleware d'authentification
+// Middleware d'authentification — lit le token depuis le cookie HTTP-only, avec fallback sur le header Authorization
 const verifierToken = (req, res, next) => {
-    const token = req.headers['authorization'];
+    let token = null;
+    
+    
+    if (req.cookies && req.cookies.token) {
+        token = req.cookies.token;
+    }
+    
+    else if (req.headers['authorization']) {
+        token = req.headers['authorization'].split(' ')[1];
+    }
+    
     if (!token) return res.status(401).json({ error: 'Accès non autorisé' });
     
     try {
-        const decoded = jwt.verify(token.split(' ')[1], SECRET_KEY);
+        const decoded = jwt.verify(token, SECRET_KEY);
         req.user = decoded;
         next();
     } catch (error) {
@@ -85,10 +100,22 @@ app.post('/api/login', async (req, res) => {
             SECRET_KEY,
             { expiresIn: '24h' }
         );
-        res.json({ token, user: { id: user.id, nom: user.nom, email: user.email, role: user.role } });
+        
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: false,        
+            sameSite: 'lax',      
+            maxAge: 24 * 60 * 60 * 1000 // 24 heures
+        });
+        res.json({ user: { id: user.id, nom: user.nom, email: user.email, role: user.role } });
     } catch (error) {
         res.status(500).json({ error: 'Erreur serveur' });
     }
+});
+
+app.post('/api/logout', (req, res) => {
+    res.clearCookie('token');
+    res.json({ message: 'Déconnexion réussie' });
 });
 
 app.get('/api/verify', verifierToken, (req, res) => {
@@ -99,7 +126,13 @@ app.get('/api/verify', verifierToken, (req, res) => {
 app.get('/api/seances', verifierToken, (req, res) => {
     db.query('SELECT id, date_seance, heure_debut, heure_fin, description FROM seances ORDER BY date_seance DESC, heure_debut DESC', (err, results) => {
         if (err) return res.status(500).json({ error: err.message });
-        res.json(results);
+        const formattedResults = results.map(row => ({
+            ...row,
+            date_seance: row.date_seance.toISOString().split('T')[0]
+        }));
+
+        res.json(formattedResults);
+        
     });
 });
 
@@ -301,11 +334,26 @@ app.get('/api/stats/seances-completes', verifierToken, (req, res) => {
                 if (err) etudiants = [];
                 const presents = etudiants.filter(e => e.present === 1).length;
                 const absJ = etudiants.filter(e => e.present === 0 && e.justificatif_valide === 1).length;
-                const absNJ = etudiants.filter(e => e.present === 0 && (e.justificatif_valide === 0 || e.justificatif_valide === null)).length;
+                const absNJ = etudiants.filter(
+                    e =>
+                        e.present === 0 &&
+                        (
+                            e.justificatif_valide === 0 ||
+                            e.justificatif_valide === null ||
+                            e.justificatif_valide === 2
+                        )
+                ).length;
                 resultats.push({
-                    id: seance.id, date_seance: seance.date_seance, description: seance.description,
-                    total_etudiants: seance.total_etudiants, presents, absents_justifies: absJ, absents_non_justifies: absNJ,
-                    taux_presence: seance.total_etudiants > 0 ? ((presents / seance.total_etudiants) * 100).toFixed(1) : 0
+                    id: seance.id,
+                    date_seance: seance.date_seance.toISOString().split('T')[0],
+                    description: seance.description,
+                    total_etudiants: seance.total_etudiants,
+                    presents,
+                    absents_justifies: absJ,
+                    absents_non_justifies: absNJ,
+                    taux_presence: seance.total_etudiants > 0
+                        ? ((presents / seance.total_etudiants) * 100).toFixed(1)
+                        : 0
                 });
                 compteur++;
                 if (compteur === seances.length) res.json(resultats);
@@ -325,7 +373,7 @@ app.get('/enseignant', (req, res) => res.sendFile(path.join(__dirname, 'enseigna
 app.get('/admin', (req, res) => res.sendFile(path.join(__dirname, 'admin.html')));
 
 // ============ DÉMARRAGE ============
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0" , () => {
     console.log(`\n🚀 Serveur démarré sur http://localhost:${PORT}`);
     console.log(`🔐 Admin: admin@presence.com / admin123`);
     console.log(`🔐 Enseignant: prof@presence.com / enseignant123\n`);

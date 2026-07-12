@@ -108,8 +108,7 @@
 </main>
 
 <script>
-const API = 'http://localhost:3000/api';
-let token = null;
+const API = '/api';
 let seanceId = null;
 let students = [];
 let mods = {};
@@ -124,10 +123,15 @@ const ICONS = {
     save: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>'
 };
 
-function init() {
-    token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (!token || user.role !== 'enseignant') { window.location.href = '/'; return; }
+async function init() {
+    // Vérifier l'authentification via le cookie HTTP-only
+    const res = await fetch(`${API}/verify`, { credentials: 'include' });
+    if (!res.ok) { window.location.href = '/'; return; }
+    const data = await res.json();
+    const user = data.user;
+    if (!user || user.role !== 'enseignant') { window.location.href = '/'; return; }
+    // Stocker les infos utilisateur pour l'affichage
+    localStorage.setItem('user', JSON.stringify(user));
 
     document.getElementById('userName').textContent = user.nom;
     document.getElementById('userEmail').textContent = user.email;
@@ -139,7 +143,8 @@ function init() {
 async function api(url, opts = {}) {
     const res = await fetch(`${API}${url}`, {
         ...opts,
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, ...opts.headers }
+        credentials: 'include', // Important : envoie le cookie à chaque requête
+        headers: { 'Content-Type': 'application/json', ...opts.headers }
     });
     if (res.status === 401) { logout(); return; }
     return res.json();
@@ -216,7 +221,7 @@ function renderList() {
 
         let badge = '';
         if (e.justificatif && e.justificatif_valide === 1) badge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-emerald-50 text-emerald-700 text-[10px] font-semibold rounded-full border border-emerald-200">Validé</span>';
-        else if (e.justificatif && e.justificatif_valide === 0) badge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-red-50 text-red-700 text-[10px] font-semibold rounded-full border border-red-200">Rejeté</span>';
+        else if (e.justificatif && e.justificatif_valide === 2) badge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-red-50 text-red-700 text-[10px] font-semibold rounded-full border border-red-200">Rejeté</span>';
         else if (e.justificatif) badge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-50 text-amber-700 text-[10px] font-semibold rounded-full border border-amber-200">En attente</span>';
 
         return `<div class="px-5 py-4 ${modified?'bg-amber-50/50':''} transition-colors">
@@ -288,7 +293,7 @@ async function uploadJustif(etudiantId) {
         fd.append('etudiant_id', String(etudiantId));
         fd.append('seance_id', seanceId);
         fd.append('motif', motif);
-        await fetch(`${API}/upload-justificatif`, { method: 'POST', headers: { 'Authorization': `Bearer ${token}` }, body: fd });
+        await fetch(`${API}/upload-justificatif`, { method: 'POST', credentials: 'include', body: fd });
         showInfo('Justificatif envoyé ! En attente de validation.', 'success');
         mods[etudiantId] = 'justifie';
         renderAll();
@@ -326,7 +331,11 @@ function showInfo(msg, type) {
     box.classList.remove('hidden');
 }
 
-function logout() { localStorage.clear(); window.location.href = '/'; }
+async function logout() {
+    await fetch(`${API}/logout`, { method: 'POST', credentials: 'include' });
+    localStorage.clear();
+    window.location.href = '/';
+}
 
 init();
 </script>

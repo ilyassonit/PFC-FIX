@@ -99,7 +99,7 @@
     </div>
 
     <script>
-        const API_URL = 'http://localhost:3000/api';
+        const API_URL = '/api';
 
         function fillDemo(type) {
             if (type === 'admin') {
@@ -126,11 +126,12 @@
                 const res = await fetch(`${API_URL}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',  // Important : envoie et reçoit les cookies
                     body: JSON.stringify({ email, password })
                 });
                 const data = await res.json();
                 if (res.ok) {
-                    localStorage.setItem('token', data.token);
+                    // Le token est stocké dans un cookie HTTP-only côté serveur
                     localStorage.setItem('user', JSON.stringify(data.user));
                     window.location.href = data.user.role === 'admin' ? '/admin' : '/enseignant';
                 } else {

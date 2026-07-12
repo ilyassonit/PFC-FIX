@@ -188,14 +188,18 @@
 </main>
 
 <script>
-const API = 'http://localhost:3000/api';
-let token = null;
+const API = '/api';
 let students = [];
 
 async function init() {
-    token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    if (!token || user.role !== 'admin') { window.location.href = '/'; return; }
+    // Vérifier l'authentification via le cookie HTTP-only
+    const res = await fetch(`${API}/verify`, { credentials: 'include' });
+    if (!res.ok) { window.location.href = '/'; return; }
+    const data = await res.json();
+    const user = data.user;
+    if (!user || user.role !== 'admin') { window.location.href = '/'; return; }
+    // Stocker les infos utilisateur pour l'affichage
+    localStorage.setItem('user', JSON.stringify(user));
     document.getElementById('userName').textContent = user.nom;
     document.getElementById('userEmail').textContent = user.email;
     document.getElementById('userInitial').textContent = (user.nom || 'U').charAt(0).toUpperCase();
@@ -206,7 +210,8 @@ async function init() {
 async function api(url, opts = {}) {
     const res = await fetch(`${API}${url}`, {
         ...opts,
-        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}`, ...opts.headers }
+        credentials: 'include', // Important : envoie le cookie à chaque requête
+        headers: { 'Content-Type': 'application/json', ...opts.headers }
     });
     if (res.status === 401) { logout(); return; }
     return res.json();
@@ -317,7 +322,11 @@ function showMsg(msg, type) {
     box.classList.remove('hidden');
     setTimeout(() => box.classList.add('hidden'), 4000);
 }
-function logout() { localStorage.clear(); window.location.href = '/'; }
+async function logout() {
+    await fetch(`${API}/logout`, { method: 'POST', credentials: 'include' });
+    localStorage.clear();
+    window.location.href = '/';
+}
 
 init();
 </script>
