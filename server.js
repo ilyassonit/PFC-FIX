@@ -35,13 +35,18 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 
-// Connexion MySQL
+console.log({
+    host: process.env.MYSQLHOST,
+    port: process.env.MYSQLPORT,
+    database: process.env.MYSQLDATABASE
+}); 
+
 const db = mysql.createConnection({
     host: process.env.MYSQLHOST,
     user: process.env.MYSQLUSER,
     password: process.env.MYSQLPASSWORD,
     database: process.env.MYSQLDATABASE || process.env.MYSQL_DATABASE,
-    port: process.env.MYSQLPORT
+    port: Number(process.env.MYSQLPORT || 3306)
 });
 
 db.connect(async (err) => {
