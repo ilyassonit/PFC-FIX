@@ -272,7 +272,7 @@ app.post('/api/upload-justificatif', verifierToken, upload.single('fichier'), (r
 app.get('/api/justificatifs/en-attente', verifierToken, (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: 'Accès refusé' });
     db.query(`
-        SELECT p.id as presence_id, e.nom, e.prenom, e.matricule, s.date_seance, s.description as seance, p.justificatif, p.date_justificatif, p.motif_absence
+        SELECT p.id as presence_id, e.nom, e.prenom, e.matricule, DATE_FORMAT(s.date_seance, '%d/%m/%Y') AS date_seance, s.description as seance, p.justificatif, p.date_justificatif, p.motif_absence
         FROM presences p JOIN etudiants e ON p.etudiant_id = e.id JOIN seances s ON p.seance_id = s.id
         WHERE p.present = 0 AND p.justificatif IS NOT NULL AND (p.justificatif_valide = 0 OR p.justificatif_valide IS NULL)
         ORDER BY p.date_justificatif DESC
@@ -282,7 +282,7 @@ app.get('/api/justificatifs/en-attente', verifierToken, (req, res) => {
 app.get('/api/justificatifs/valides', verifierToken, (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: 'Accès refusé' });
     db.query(`
-        SELECT p.id as presence_id, e.nom, e.prenom, e.matricule, s.date_seance, s.description as seance, p.justificatif, p.date_justificatif, p.motif_absence
+        SELECT p.id as presence_id, e.nom, e.prenom, e.matricule, DATE_FORMAT(s.date_seance, '%d/%m/%Y') AS date_seance, s.description as seance, p.justificatif, p.date_justificatif, p.motif_absence
         FROM presences p JOIN etudiants e ON p.etudiant_id = e.id JOIN seances s ON p.seance_id = s.id
         WHERE p.present = 0 AND p.justificatif IS NOT NULL AND p.justificatif_valide = 1
         ORDER BY p.date_justificatif DESC
@@ -292,7 +292,7 @@ app.get('/api/justificatifs/valides', verifierToken, (req, res) => {
 app.get('/api/justificatifs/rejetes', verifierToken, (req, res) => {
     if (req.user.role !== 'admin') return res.status(403).json({ error: 'Accès refusé' });
     db.query(`
-        SELECT p.id as presence_id, e.nom, e.prenom, e.matricule, s.date_seance, s.description as seance, p.justificatif, p.date_justificatif, p.motif_absence
+        SELECT p.id as presence_id, e.nom, e.prenom, e.matricule, DATE_FORMAT(s.date_seance, '%d/%m/%Y') AS date_seance, s.description as seance, p.justificatif, p.date_justificatif, p.motif_absence
         FROM presences p JOIN etudiants e ON p.etudiant_id = e.id JOIN seances s ON p.seance_id = s.id
         WHERE p.present = 0 AND p.justificatif IS NOT NULL AND p.justificatif_valide = 2
         ORDER BY p.date_justificatif DESC
